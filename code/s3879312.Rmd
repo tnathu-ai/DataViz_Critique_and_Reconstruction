@@ -238,6 +238,75 @@ df
 
 The following plot fixes the main issues in the original.
 
+```{r, echo=FALSE, out.width="70%", fig.cap="Reconstructed plot."}
+library(ggplot2)
+library(tidyr)
+# knitr::include_graphics("../images/plot.png")
+
+# Updated data
+antibiotic_resistance_df <- data.frame(
+  Bacterium_name = c('A. baumanii', 'K. pneumoniae', 'E. coli', 'E. faecium', 'S. aureus', 'P. aeruginosa', 'Enterococcus'),
+  Causes = c('pneumonia, meningitis', 'pneumonia, bronchitis', 'gastrointestinal infections', 'urinary infections', 'skin infections', 'sepsis, skin infections', 'urinary tract, bloodstream infections'),
+  Gram_negative = c('yes', 'yes', 'yes', 'no', 'no', 'yes', 'no'),
+  Penicillin = c(46, 8, 12, NA, 90, 23, NA),
+  Streptomycin = c(NA, NA, 75, 85, 15, 26, 50),
+  Erythromycin = c(58, 11, 19, 30, 45, 40, 38)
+)
+
+# Reshape data for plotting
+df_long <- antibiotic_resistance_df %>% 
+  gather(key = 'Antibiotic', value = 'Resistance', Penicillin, Streptomycin, Erythromycin)
+
+# Comprehensive Visualization
+ggplot(df_long, aes(x = Bacterium_name, y = Resistance, fill = Antibiotic)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Gram_negative, scales = "free", ncol = 2) +
+  labs(
+    title = "Antibiotic Resistance Across Different Bacteria",
+    subtitle = "Faceted by Gram-negative Status",
+    x = "Bacterium",
+    y = "Resistance (%)",
+    caption = "Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data)\nInspiration from: https://informationisbeautiful.net/visualizations/antibiotic-resistance/"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top", plot.caption = element_text(hjust = 1, color = "gray"))
+```
+
+
+```{r}
+library(ggplot2)
+library(tidyr)
+
+# Updated data
+antibiotic_resistance_df <- data.frame(
+  Bacterium_name = c('A. baumanii', 'K. pneumoniae', 'E. coli', 'E. faecium', 'S. aureus', 'P. aeruginosa', 'Enterococcus'),
+  Causes = c('pneumonia, meningitis', 'pneumonia, bronchitis', 'gastrointestinal infections', 'urinary infections', 'skin infections', 'sepsis, skin infections', 'urinary tract, bloodstream infections'),
+  Gram_negative = c('yes', 'yes', 'yes', 'no', 'no', 'yes', 'no'),
+  Penicillin = c(46, 8, 12, NA, 90, 23, NA),
+  Streptomycin = c(NA, NA, 75, 85, 15, 26, 50),
+  Erythromycin = c(58, 11, 19, 30, 45, 40, 38)
+)
+
+# Reshape data for plotting
+df_long <- antibiotic_resistance_df %>% 
+  gather(key = 'Antibiotic', value = 'Resistance', Penicillin, Streptomycin, Erythromycin)
+
+# Comprehensive Visualization
+ggplot(df_long, aes(x = Bacterium_name, y = Resistance, fill = Antibiotic)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Gram_negative, scales = "free", ncol = 2) +
+  labs(
+    title = "Antibiotic Resistance Across Different Bacteria",
+    subtitle = "Faceted by Gram-negative Status",
+    x = "Bacterium",
+    y = "Resistance (%)",
+    caption = "Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data)\nInspiration from: https://informationisbeautiful.net/visualizations/antibiotic-resistance/"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top", plot.caption = element_text(hjust = 1))
+```
+
+
 ```{r}
 library(ggplot2)
 library(tidyr)
