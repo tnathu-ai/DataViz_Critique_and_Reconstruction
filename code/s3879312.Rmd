@@ -165,14 +165,14 @@ The objective and audience of the original data visualisation chosen can be summ
 
 The visualisation chosen had the following three main issues:
 
-* Briefly explain issue 1: hard for common audience with no medical background to identify issues
-* Briefly explain issue 2: Color blindness issues
-* Briefly explain issue 3: Preattentive Processing - Shapes and sizes of the circle is not unified (area is not obvious and overlapping on the grid), light/dark, use density mislead, Area
+* hard for common audience with no medical background to identify issues
+* \Color blindness issues
+*  Preattentive Processing - Shapes and sizes of the circle is not unified (area is not obvious and overlapping on the grid), light/dark, use density mislead, Area
 (highlight timeline: no development new antibiotics for 20 years and the resistance of existing antibiotics)
 not compare on the same scale
 No major visually saying that no major new antibiotics develop in 20 years
 
-Changes:
+Changes in new visualization:
 + Gestalt Laws: proximity (cluster together so a group?), similarity -> corrrect using symmetry to compare side by side, auto interpreted as the foreground (Figure Ground Principle)
 + Use Length to represent position - common scale - same scale but unaligned for 2 cat
 + Color - Hue (different color viz for nominal variables)
@@ -259,6 +259,363 @@ df
 ### Reconstruction
 
 The following plot fixes the main issues in the original.
+
+```{r}
+# Data
+antibiotic_resistance_df <- data.frame(
+  Bacterium_name = c('A. baumanii', 'K. pneumoniae', 'E. faecium', 'N. gonorrhoeae', 'Shigella', 
+                     'M. tuberculosis', 'P. mirabilis', 'CoNS', 'C. difficile', 
+                     'P. aeruginosa', 'S. pneumoniae', 'E. coli', 'S. aureus'),
+  
+  Causes = c('pneumonia, meningitis', 'pneumonia, bronchitis, urinary infections', 'urinary infections',
+             'gonorrhoea', 'dysentry', 'tuberculosis', 'kidney stones, proteus', 'food poisoning',
+             'severe diarrhoea, colitis', 'lung, urinary, skin, wound & blood infections', 
+             'pneumonia, meningitis & many other infections', 'food poisoning', 'boils, sinusitis, food poisoning'),
+  
+  Gram_negative = c('yes', 'yes', 'no', 'yes', 'yes', 'no', 'yes', 'no', 'no', 'yes', 'no', 'yes', 'no'),
+
+  Penicillin = c(46, 8, NA, 30, NA, NA, 9, NA, NA, 15, 8, 9, NA),
+  Streptomycin = c(NA, NA, 75, NA, 56, 9, NA, NA, NA, NA, NA, NA, NA),
+  Chloramphenicol = c(NA, NA, NA, NA, 14, NA, NA, NA, 3, NA, NA, NA, NA),
+  Erythromycin = c(58, 11, 19, NA, 45, NA, 22, 16, 11, 27, NA, 45, 51),
+  Isoniazid = c(NA, NA, NA, NA, 0.9, NA, NA, NA, NA, NA, NA, NA, 0.8),
+  Vancomycin = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+  Tetracycline = c(NA, NA, NA, NA, 78, NA, NA, NA, NA, NA, NA, NA, NA),
+  Kanamycin = c(NA, NA, NA, NA, 47, NA, NA, NA, NA, NA, NA, NA, NA),
+  Oxacillin = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+  Methicillin = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+  Metronidazole = c(NA, NA, NA, NA, NA, NA, NA, NA, 10, NA, NA, NA, NA),
+  Ampicillin = c(NA, NA, NA, NA, NA, NA, NA, NA, 28, NA, NA, NA, NA),
+  Sulfamethoxazole = c(NA, NA, NA, NA, 6, NA, NA, NA, NA, NA, NA, 15, NA),
+  Cefalotin = c(NA, NA, NA, NA, 0.2, NA, 2, NA, NA, NA, NA, NA, NA),
+  Gentamicin = c(NA, NA, NA, NA, 2, NA, 1, NA, NA, 10, NA, NA, NA),
+  Nalidixic_acid = c(NA, NA, NA, NA, 1, NA, NA, NA, NA, 14, NA, NA, NA),
+  Rifampicin = c(NA, NA, NA, NA, 46, NA, NA, NA, NA, NA, NA, NA, NA),
+  Clindamycin = c(NA, NA, NA, NA, 0.06, NA, NA, NA, NA, NA, NA, NA, NA),
+  Trimethoprim_sulfa = c(NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA),
+  Amikacin = c(NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA),
+  Amoxicillin_clavulanic_acid = c(NA, NA, NA, NA, 0.06, NA, NA, NA, NA, NA, NA, NA, NA),
+  Ceftriaxone = c(NA, NA, NA, NA, 0.06, NA, NA, NA, NA, NA, NA, NA, NA),
+  Ceftazidime = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+  Imipenem = c(52, NA, NA, NA, 64, 60, 0.6, 13, 39, 12, 8, 1.5, NA),
+  Ceftiofur = c(41, NA, NA, NA, NA, NA, NA, NA, NA, 10, NA, NA, NA),
+  Ciprofloxacin = c(25, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+  Moxifloxacin = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+  Piperacillin_tazobactam = c(51, 6, NA, 30, NA, NA, NA, NA, NA, 10, NA, NA, NA)
+)
+
+# Antibiotic Introduction Dates
+antibiotic_intro_dates <- data.frame(
+  Antibiotic = c('Penicillin', 'Streptomycin', 'Chloramphenicol', 'Erythromycin', 'Isoniazid', 
+                 'Vancomycin', 'Tetracycline', 'Kanamycin', 'Oxacillin', 'Methicillin', 'Metronidazole', 
+                 'Ampicillin', 'Sulfamethoxazole', 'Cefalotin', 'Gentamicin', 'Nalidixic_acid', 
+                 'Rifampicin', 'Clindamycin', 'Trimethoprim_sulfa', 'Amikacin', 'Amoxicillin_clavulanic_acid', 
+                 'Ceftriaxone', 'Ceftazidime', 'Imipenem', 'Ceftiofur', 'Ciprofloxacin', 'Moxifloxacin', 
+                 'Piperacillin_tazobactam'),
+  
+  Date_introduced = c(1942, 1944, 1949, 1952, 1952, 1955, 1955, 1958, 1959, 1960, 1960, 1961, 1961, 1964, 
+                      1964, 1967, 1967, 1968, 1968, 1976, 1981, 1982, 1983, 1985, 1987, 1987, 1987, 1989)
+)
+
+# View the dataframes
+head(antibiotic_resistance_df)
+head(antibiotic_intro_dates)
+```
+
+This heatmap provides a quick visual representation of resistance percentages for various bacteria against different antibiotics. The darker the color, the higher the resistance. The antibiotics are also ordered based on their introduction dates, which can give an idea about the evolution of resistance over time.
+```{r}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic), ]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Append introduction date to antibiotic name
+melted_df$variable <- paste(melted_df$variable, "(", melted_df$Date_introduced, ")")
+
+# Ensure that variable is a factor
+melted_df$variable <- as.factor(melted_df$variable)
+
+# Plotting the heatmap
+ggplot(melted_df, aes(x = variable, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white") +
+  scale_fill_gradient(low = "grey90", high = "red", name = "Resistance %") +
+  labs(x = "Antibiotics", y = "Bacterium") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 8), 
+        plot.margin = margin(10, 10, 40, 10)) + 
+  scale_x_discrete(position = "top") +
+  ggtitle("Resistance of Bacteria to Various Antibiotics") +
+  annotate("text", x = Inf, y = Inf, label = "No major new antibiotics developed for 20 years",
+           vjust = 2, hjust = 1.5, color = "black", size = 3, fontface = "italic")
+```
+
+
+```{r}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic), ]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Append introduction date to antibiotic name
+melted_df$variable <- paste(melted_df$variable, "(", melted_df$Date_introduced, ")")
+
+# Ensure that variable is a factor
+melted_df$variable <- as.factor(melted_df$variable)
+
+# Plotting the heatmap
+ggplot(melted_df, aes(x = variable, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white") +
+  scale_fill_gradient(low = "grey90", high = "red", name = "Resistance %") +
+  labs(x = "Antibiotics", y = "Bacterium") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(position = "top") +
+  ggtitle("Resistance of Bacteria to Various Antibiotics") +
+  annotate("text", x = Inf, y = Inf, label = "No major new antibiotics developed for 20 years",
+           vjust = 2, hjust = 1.5, color = "black", size = 3, fontface = "italic")
+```
+
+
+```{r}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic), ]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Order antibiotics by introduction date for plotting
+melted_df$variable <- factor(melted_df$variable, levels = levels(antibiotic_intro_dates$Antibiotic))
+
+# Ensure that variable is a factor
+melted_df$variable <- as.factor(melted_df$variable)
+
+# Convert Date_introduced to character if it isn't
+melted_df$Date_introduced <- as.character(melted_df$Date_introduced)
+
+# Create a label that combines the antibiotic name and its introduction date
+melted_df$label <- paste0(melted_df$variable, "\n(", melted_df$Date_introduced, ")")
+
+# Plotting the heatmap
+ggplot(melted_df, aes(x = variable, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white") +
+  scale_fill_gradient(low = brewer.pal(9, "Spectral")[1], 
+                      high = brewer.pal(9, "Spectral")[9], name = "Resistance %") +
+  labs(x = "Antibiotics", y = "Bacterium") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) + 
+  scale_x_discrete(labels = melted_df$label, position = "top") +
+  ggtitle("Resistance of Bacteria to Various Antibiotics") +
+  annotate("text", x = Inf, y = Inf, label = "No major new antibiotics developed for 20 years", 
+           vjust = 2, hjust = 1.5, color = "black", size = 3, fontface = "italic")
+```
+
+
+```{r}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic), ]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Order antibiotics by introduction date for plotting
+melted_df$variable <- factor(melted_df$variable, levels = levels(antibiotic_intro_dates$Antibiotic))
+
+# Ensure that variable is a factor
+melted_df$variable <- as.factor(melted_df$variable)
+
+# Convert Date_introduced to character if it isn't
+melted_df$Date_introduced <- as.character(melted_df$Date_introduced)
+
+# Plotting the heatmap
+ggplot(melted_df, aes(x = variable, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white") +
+  geom_text(aes(label = Date_introduced), vjust = 1.5, color = "black", size = 2.5) +
+  scale_fill_gradient(low = brewer.pal(9, "Spectral")[1], 
+                      high = brewer.pal(9, "Spectral")[9], name = "Resistance %") +
+  labs(x = "Antibiotics", y = "Bacterium") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  scale_x_discrete(position = "top") +
+  ggtitle("Resistance of Bacteria to Various Antibiotics") +
+  annotate("text", x = Inf, y = Inf, label = "No major new antibiotics developed for 20 years", 
+           vjust = 2, hjust = 1.5, color = "black", size = 3, fontface = "italic")
+```
+
+
+```{r}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer) # To use color palettes
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic), ]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Order antibiotics by introduction date for plotting
+melted_df$variable <- factor(melted_df$variable, levels = levels(antibiotic_intro_dates$Antibiotic))
+
+# Create new labels for the x-axis that combine the antibiotic name with its introduction date
+melted_df$label <- paste(melted_df$variable, melted_df$Date_introduced, sep = "\n")
+
+# Plotting the heatmap
+ggplot(melted_df, aes(x = label, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white") +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Resistance %") + # Use a color-blind friendly palette
+  labs(x = "Antibiotics\n(Date Introduced)", y = "Bacterium") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  scale_x_discrete(position = "top") +
+  ggtitle("Resistance of Bacteria to Various Antibiotics")
+```
+
+
+```{r}
+library(ggplot2)
+library(reshape2)
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic")
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic), ]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Order antibiotics by introduction date for plotting
+melted_df$variable <- factor(melted_df$variable, levels = levels(antibiotic_intro_dates$Antibiotic))
+
+# Continue with the rest of the plotting code
+
+# Plotting the heatmap
+ggplot(melted_df, aes(x = variable, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white") +
+  scale_fill_gradient(low = "white", high = "red", name = "Resistance %") +
+  labs(x = "Antibiotics", y = "Bacterium") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  scale_x_discrete(position = "top") +
+  ggtitle("Resistance of Bacteria to Various Antibiotics")
+
+```
+
+```{r}
+# Data
+antibiotic_resistance_df <- data.frame(
+  Bacterium_name = c('A. baumanii', 'K. pneumoniae', 'E. faecium', 'N. gonorrhoeae', 'Shigella', 
+                     'M. tuberculosis', 'P. mirabilis', 'CoNS', 'C. difficile', 
+                     'P. aeruginosa', 'S. pneumoniae', 'E. coli', 'S. aureus'),
+  Causes = c('pneumonia, meningitis', 'pneumonia, bronchitis', 'urinary infections', 
+             'gonorrhoea', 'dysentry', 'tuberculosis', 'kidney stones, proteus', 'food poisoning',
+             'severe diarrhoea, colitis', 'lung, urinary, skin, wound & blood infections', 
+             'pneumonia, meningitis & many other infections', 'food poisoning', 'boils, sinusitis, food poisoning'),
+  Gram_negative = c('yes', 'yes', 'no', 'yes', 'yes', 'no', 'yes', 'no', 'no', 'yes', 'no', 'yes', 'no'),
+  Penicillin = c(46, 8, NA, 30, NA, NA, 9, NA, NA, 15, 8, 9, NA),
+  Streptomycin = c(NA, NA, NA, NA, 56, NA, NA, NA, NA, NA, NA, NA, NA),
+  Erythromycin = c(58, 11, 19, NA, NA, 9, NA, 16, 11, 27, 41, NA, 51)
+  # Add other antibiotics columns as needed
+)
+
+# View the dataframe
+head(antibiotic_resistance_df)
+```
+
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(RColorBrewer)
+
+# Data
+antibiotic_resistance_df <- data.frame(
+  Bacterium_name = c('A. baumanii', 'K. pneumoniae', 'E. faecium'),
+  Causes = c('pneumonia, meningitis', 'pneumonia, bronchitis', 'urinary infections'),
+  Gram_negative = c('yes', 'yes', 'no'),
+  Penicillin = c(46, 8, NA),
+  Streptomycin = c(NA, NA, 75),
+  Erythromycin = c(58, 11, 19)
+)
+
+# Reshape data for plotting
+df_long <- antibiotic_resistance_df %>% 
+  gather(key = 'Antibiotic', value = 'Resistance', Penicillin, Streptomycin, Erythromycin)
+
+# Colorblind-friendly palette
+cb_palette <- brewer.pal(n = 3, name = "Set2")
+
+plot <- ggplot(df_long, aes(x = Bacterium_name, y = Resistance, fill = Antibiotic)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Gram_negative, scales = "free", ncol = 2) +
+  labs(
+    title = "Antibiotic Resistance Across Different Bacteria",
+    subtitle = "Faceted by Gram-negative Status",
+    x = "Bacterium",
+    y = "Resistance (%)",
+    caption = "Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data)"
+  ) +
+  scale_fill_manual(values = cb_palette) +
+  theme_minimal() +
+  theme(legend.position = "top", plot.caption = element_text(hjust = 1, color = "gray"))
+
+print(plot)
+```
+
 
 ```{r}
 library(ggplot2)
