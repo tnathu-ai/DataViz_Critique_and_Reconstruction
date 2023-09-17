@@ -1,0 +1,419 @@
+---
+title: "Assignment 2"
+author: "Thu Tran (s3879312)"
+subtitle: Deconstruct, Reconstruct Web Report
+output:
+  html_document: default
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+# Do not change these settings!
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+### Assessment declaration checklist
+
+Please carefully read the statements below and check each box if you agree with the declaration. If you do not check all boxes, your assignment will not be marked. If you make a false declaration on any of these points, you may be investigated for academic misconduct. Students found to have breached academic integrity may receive official warnings and/or serious academic penalties. Please read more about academic integrity [here](https://www.rmit.edu.au/students/student-essentials/assessment-and-exams/academic-integrity). If you are unsure about any of these points or feel your assessment might breach academic integrity, please contact your course coordinator for support. It is important that you DO NOT submit any assessment until you can complete the declaration truthfully. 
+
+**By checking the boxes below, I declare the following:**
+
+- <input type="checkbox" id="dec1" name="dec1" value="Agree"> I have not impersonated, or allowed myself to be impersonated by, any person for the purposes of this assessment 
+
+- <input type="checkbox" id="dec2" name="dec2" value="Agree"> This assessment is my original work and no part of it has been copied from any other source except where due acknowledgement is made.
+
+- <input type="checkbox" id="dec3" name="dec3" value="Agree"> No part of this assessment has been written for me by any other person except where such collaboration has been authorised by the lecturer/teacher concerned.
+
+- <input type="checkbox" id="dec4" name="dec4" value="Agree"> Where this work is being submitted for individual assessment, I declare that it is my original work and that no part has been contributed by, produced by or in conjunction with another student.
+
+- <input type="checkbox" id="dec5" name="dec5" value="Agree"> I give permission for my assessment response to be reproduced, communicated compared and archived for the purposes of detecting plagiarism.
+
+- <input type="checkbox" id="dec6" name="dec6" value="Agree"> I give permission for a copy of my assessment to be retained by the university for review and comparison, including review by external examiners.
+
+**I understand that:**
+
+- <input type="checkbox" id="dec7" name="dec7" value="Agree"> Plagiarism is the presentation of the work, idea or creation of another person as though it is your own. It is a form of cheating and is a very serious academic offence that may lead to exclusion from the University. Plagiarised material can be drawn from, and presented in, written, graphic and visual form, including electronic data and oral presentations. Plagiarism occurs when the origin of the material used is not appropriately cited.
+
+- <input type="checkbox" id="dec8" name="dec8" value="Agree"> Plagiarism includes the act of assisting or allowing another person to plagiarise or to copy my work.
+
+**I agree and acknowledge that:**
+
+- <input type="checkbox" id="dec9" name="dec9" value="Agree"> I have read and understood the Declaration and Statement of Authorship above.
+
+- <input type="checkbox" id="dec10" name="dec10" value="Agree"> If I do not agree to the Declaration and Statement of Authorship in this context and all boxes are not checked, the assessment outcome is not valid for assessment purposes and will not be included in my final result for this course.
+
+
+# Antibiotic Resistance: A Comprehensive Analysis 
+
+## Statement of Purpose
+The aim of this study is two-fold:
+1. To provide an effective visualization that educates the general public about the dangers of excessive antibiotic use.
+2. To offer infectious disease doctors a quick yet comprehensive overview of antibiotic resistance in commonly encountered bacteria.
+
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Columns Explained](#columns-explained)
+3. [Key Highlights](#key-highlights)
+4. [Key Concerns](#key-concerns)
+5. [Conclusion](#conclusion)
+6. [References](#references)
+
+---
+
+## Introduction
+The following report aims to provide a detailed understanding of a dataset concerning antibiotic resistance across various bacterial species. This topic is of growing concern in the medical and scientific community. 
+
+---
+
+## Columns Explained
+
+| Column                    | Description                                                                 |
+|---------------------------|-----------------------------------------------------------------------------|
+| Bacterium Name            | Scientific name of the bacteria.                                             |
+| Causes                    | Diseases or conditions that the bacteria typically cause.                    |
+| Gram-negative?            | Indicates whether the bacterium is Gram-negative ('yes' or 'no').            |
+| Individual Drugs          | Resistance levels to specific antibiotics, represented as percentages.       |
+| Remarks                   | Additional comments about antibiotic resistance.                             |
+| Resistance Score          | A scale from 1-4 indicating the level of concern, with higher scores being more concerning. |
+| N Antibiotics or Classes  | Number of antibiotics or classes showing at least some resistance.           |
+| Average % Resistance      | Calculated average resistance score across all considered antibiotics.       |
+
+---
+
+## Key Highlights
+
+### Bacterial Species of Concern
+
+1. **A. baumanii**
+    - Nicknamed "Iraqibacter"
+    - High resistance to multiple antibiotics
+    - Resistance score: 4
+
+2. **E. faecium**
+    - 75% resistance to a specific antibiotic
+    - Average resistance: 47%
+
+3. **N. gonorrhoeae**
+    - Causes gonorrhea
+    - Resistance score: 3
+    - 14.35% average resistance
+
+4. **M. tuberculosis**
+    - Extremely drug-resistant variants
+    - Resistance score: 3
+
+5. **S. aureus**
+    - 25.90% average resistance but to only one antibiotic class
+
+6. **Note After 1992**
+    - No major new antibiotics have been developed for over 20 years.
+
+7. **Gram-negative Bacteria**
+    - Typically more resistant due to their cell wall structure.
+
+---
+
+## Key Concerns
+
+1. **Rising Resistance**: Resistance is stable or increasing for many bacteria.
+2. **Multi-drug Resistance**: Resistance to multiple classes of antibiotics.
+3. **Gram-negative Bacteria**: More resistant and increasing so over time.
+4. **Data Gaps**: Unquantified resistances could underrepresent actual resistance levels.
+
+---
+
+## Conclusion
+
+This dataset serves as a snapshot that underlines the urgency for new antibiotics and effective strategies to manage antibiotic resistance. It calls for immediate action from both the medical community and policymakers.
+
+---
+
+## References
+- [Original data visualization source](https://informationisbeautiful.net/visualizations/antibiotic-resistance/)
+- [Data](https://docs.google.com/spreadsheets/d/1QMSQDr0vx_NuMkbSb-9wjUCBplMZpYvxASTJh1M-NhI/edit#gid=0)
+- Centre for Disease Dynamics
+- World Health Organisation
+- CDC (US data)
+
+
+
+## Deconstruct
+
+### Original
+
+The original data visualisation selected for the assignment was as follows:
+
+<br>
+<center>
+<img src="MO_Barchart.jpg" width="80%">
+</center>
+<center>*Source: ACMA Research and Analysis Section (2015).*</center>
+<br>
+
+
+### Objective and Audience
+
+The objective and audience of the original data visualisation chosen can be summarised as follows: 
+
+**Objective**
+
+**Audience**
+
+### Critique
+
+The visualisation chosen had the following three main issues:
+
+* Briefly explain issue 1
+* Briefly explain issue 2
+* Briefly explain issue 3
+
+## Reconstruct
+
+### Code
+
+The following code was used to fix the issues identified in the original. 
+
+```{r}
+# Read and preprocess libraries
+library(readxl)
+library(dplyr)
+library(stringr)
+library(writexl)
+
+# Load necessary libraries
+library(ggplot2)
+library(tidyr)
+
+```
+
+### Pre-processing
+
+```{r}
+# Comment: Read Excel data from the first sheet
+data <- read_excel("../data/antibiotic_data.xlsx", sheet = 1)
+
+# Comment: Rename Columns
+# Assuming the first row has column names that need renaming
+names(data) <- str_replace_all(names(data), c(" " = "_", "%" = "percent", "-" = "_"))
+
+# Comment: Save the cleaned data into a new CSV file
+write.csv(data, "../data/cleaned_antibiotic_data.csv", row.names = FALSE)
+
+data
+```
+
+
+```{r}
+
+# Load data (assuming it's saved in a file called "data.csv")
+df <- read.csv("../data/cleaned_antibiotic_data.csv", stringsAsFactors = FALSE, header = TRUE)
+
+# Handle missing values:
+# Replace "x" with NA and convert to numeric
+df[df == "x"] <- NA
+df[4:ncol(df)] <- lapply(df[4:ncol(df)], as.numeric)
+
+# Handle columns:
+# The first three columns seem to be about the bacterium name, its common diseases, and its gram-negative status. 
+# For better clarity, we will rename them.
+colnames(df)[1:3] <- c("BacteriumName", "Causes", "GramNegative")
+
+# Removing rows that are not relevant to our analysis:
+# Rows that contain only NAs or meta-information are removed.
+df <- df %>% filter(!is.na(BacteriumName))
+
+# As a suggestion, you might want to separate the antibiotics based on their family/group. 
+# However, this would require domain knowledge about which antibiotic belongs to which group.
+
+# You can save the cleaned data to a new CSV file if desired.
+write.csv(df, "../data/cleaned_data.csv", row.names = FALSE)
+
+# The data is now cleaned and saved as "cleaned_data.csv".
+df
+
+```
+
+
+### Reconstruction
+
+The following plot fixes the main issues in the original.
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(grid)
+
+# Updated data
+antibiotic_resistance_df <- data.frame(
+  Bacterium_name = c('A. baumanii', 'K. pneumoniae', 'E. coli', 'E. faecium', 'S. aureus', 'P. aeruginosa', 'Enterococcus'),
+  Causes = c('pneumonia, meningitis', 'pneumonia, bronchitis', 'gastrointestinal infections', 'urinary infections', 'skin infections', 'sepsis, skin infections', 'urinary tract, bloodstream infections'),
+  Gram_negative = c('yes', 'yes', 'yes', 'no', 'no', 'yes', 'no'),
+  Penicillin = c(46, 8, 12, NA, 90, 23, NA),
+  Streptomycin = c(NA, NA, 75, 85, 15, 26, 50),
+  Erythromycin = c(58, 11, 19, 30, 45, 40, 38)
+)
+
+# Reshape data for plotting
+df_long <- antibiotic_resistance_df %>% 
+  gather(key = 'Antibiotic', value = 'Resistance', Penicillin, Streptomycin, Erythromycin)
+
+# Create the plot and save it to an object
+p <- ggplot(df_long, aes(x = Bacterium_name, y = Resistance, fill = Antibiotic)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Gram_negative, scales = "free", ncol = 2) +
+  labs(
+    title = "Antibiotic Resistance Across Different Bacteria",
+    subtitle = "Faceted by Gram-negative Status",
+    x = "Bacterium",
+    y = "Resistance (%)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = c(1, 1), legend.justification = c(1, 1))
+
+# Print the plot
+print(p)
+
+# Add the source text using grid package
+grid.text("Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data)\nInspiration from: https://informationisbeautiful.net/visualizations/antibiotic-resistance/",
+          x = 1, y = 1.03, hjust = 1, gp = gpar(col = "darkgray", fontsize = 8))
+```
+
+
+```{r}
+library(ggplot2)
+library(tidyr)
+
+# Updated data
+antibiotic_resistance_df <- data.frame(
+  Bacterium_name = c('A. baumanii', 'K. pneumoniae', 'E. coli', 'E. faecium', 'S. aureus', 'P. aeruginosa', 'Enterococcus'),
+  Causes = c('pneumonia, meningitis', 'pneumonia, bronchitis', 'gastrointestinal infections', 'urinary infections', 'skin infections', 'sepsis, skin infections', 'urinary tract, bloodstream infections'),
+  Gram_negative = c('yes', 'yes', 'yes', 'no', 'no', 'yes', 'no'),
+  Penicillin = c(46, 8, 12, NA, 90, 23, NA),
+  Streptomycin = c(NA, NA, 75, 85, 15, 26, 50),
+  Erythromycin = c(58, 11, 19, 30, 45, 40, 38)
+)
+
+# Reshape data for plotting
+df_long <- antibiotic_resistance_df %>% 
+  gather(key = 'Antibiotic', value = 'Resistance', Penicillin, Streptomycin, Erythromycin)
+
+# Comprehensive Visualization
+ggplot(df_long, aes(x = Bacterium_name, y = Resistance, fill = Antibiotic)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Gram_negative, scales = "free", ncol = 2) +
+  labs(
+    title = "Antibiotic Resistance Across Different Bacteria",
+    subtitle = "Faceted by Gram-negative Status",
+    x = "Bacterium",
+    y = "Resistance (%)"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.margin = margin(5.5, 5.5, 5.5, 5.5, "mm")  # Add a bit more margin to the bottom to accommodate the source citation
+  ) +
+  annotation_custom(
+    grob = grid::textGrob(label = "Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data)\nInspiration from: https://informationisbeautiful.net/visualizations/antibiotic-resistance/",
+                          gp = grid::gpar(col = "darkgray", fontsize = 8)),
+    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = -Inf
+  )
+```
+
+
+```{r}
+library(ggplot2)
+library(tidyr)
+
+# Updated data
+antibiotic_resistance_df <- data.frame(
+  Bacterium_name = c('A. baumanii', 'K. pneumoniae', 'E. coli', 'E. faecium', 'S. aureus', 'P. aeruginosa', 'Enterococcus'),
+  Causes = c('pneumonia, meningitis', 'pneumonia, bronchitis', 'gastrointestinal infections', 'urinary infections', 'skin infections', 'sepsis, skin infections', 'urinary tract, bloodstream infections'),
+  Gram_negative = c('yes', 'yes', 'yes', 'no', 'no', 'yes', 'no'),
+  Penicillin = c(46, 8, 12, NA, 90, 23, NA),
+  Streptomycin = c(NA, NA, 75, 85, 15, 26, 50),
+  Erythromycin = c(58, 11, 19, 30, 45, 40, 38)
+)
+
+# Reshape data for plotting
+df_long <- antibiotic_resistance_df %>% 
+  gather(key = 'Antibiotic', value = 'Resistance', Penicillin, Streptomycin, Erythromycin)
+
+# Comprehensive Visualization
+ggplot(df_long, aes(x = Bacterium_name, y = Resistance, fill = Antibiotic)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Gram_negative, scales = "free", ncol = 2) +
+  labs(
+    title = "Antibiotic Resistance Across Different Bacteria",
+    subtitle = "Faceted by Gram-negative Status",
+    x = "Bacterium",
+    y = "Resistance (%)"
+  ) +
+  theme_minimal()
+```
+
+
+```{r fig.align="center", echo = FALSE}
+# Sample data
+antibiotic_resistance_df <- data.frame(
+  Bacterium_name = c('A. baumanii', 'K. pneumoniae', 'E. faecium'),
+  Causes = c('pneumonia, meningitis', 'pneumonia, bronchitis', 'urinary infections'),
+  Gram_negative = c('yes', 'yes', 'no'),
+  Penicillin = c(46, 8, NA),
+  Streptomycin = c(NA, NA, 75),
+  Erythromycin = c(58, 11, 19)
+)
+
+# Reshape data for plotting
+df_long <- antibiotic_resistance_df %>% 
+  gather(key = 'Antibiotic', value = 'Resistance', Penicillin, Streptomycin, Erythromycin)
+
+# Comprehensive Visualization
+ggplot(df_long, aes(x = Bacterium_name, y = Resistance, fill = Antibiotic)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Gram_negative, scales = "free", ncol = 2) +
+  labs(
+    title = "Antibiotic Resistance Across Different Bacteria",
+    subtitle = "Faceted by Gram-negative Status",
+    x = "Bacterium",
+    y = "Resistance (%)"
+  ) +
+  theme_minimal()
+```
+
+## References
+
+The reference to the original data visualisation choose, the data source(s) used for the reconstruction and any other sources used for this assignment are as follows:
+
+* ACMA Research and Analysis Section. (2015). *Australians get mobile*. Retrieved August 13, 2019, from Australian Communications and Media Authority website: https://www.acma.gov.au/theACMA/engage-blogs/engage-blogs/Research-snapshots/Australians-get-mobile
+
+* Pneumococcal Disease and Antibiotic Resistance | CDC. (2022, January 24). Www.cdc.gov. https://www.cdc.gov/pneumococcal/clinicians/drug-resistance.html
+
+* About Division of Bacterial Diseases | CDC. (2021, November 30). Www.cdc.gov. https://www.cdc.gov/ncird/dbd.html
+
+* Immunization and Respiratory Diseases (NCIRD) Home. (2020). https://www.cdc.gov/ncird/
+
+* Antibiotic - New World Encyclopedia. (n.d.). Www.newworldencyclopedia.org. Retrieved September 16, 2023, from https://www.newworldencyclopedia.org/entry/Antibiotic
+
+* Antibiotics | Society | The Guardian. (n.d.). The Guardian. Retrieved September 16, 2023, from https://www.theguardian.com/society/antibiotics
+
+* Antibiotics | Society | The Guardian. (n.d.). The Guardian. Retrieved September 16, 2023, from https://www.theguardian.com/society/antibiotics
+
+* Drug-Resistant Superbugs Sweeping Across Europe - Slashdot. (2011, November 18). Science.slashdot.org. https://science.slashdot.org/story/11/11/18/0430245/drug-resistant-superbugs-sweeping-across-europe
+
+* Drug-Resistant Superbugs Sweeping Across Europe - Slashdot. (2011, November 18). Science.slashdot.org. https://science.slashdot.org/story/11/11/18/0430245/drug-resistant-superbugs-sweeping-across-europe
+
+* NHS. (2018, August 16). Medicines A-Z. Nhs.uk. https://www.nhs.uk/medicines/
+
+* Wise, R., Hart, T., Cars, O., Streulens, M., Helmuth, R., Huovinen, P., & Sprenger, M. (1998). Antimicrobial resistance. BMJ, 317(7159), 609–610. https://doi.org/10.1136/bmj.317.7159.609
+
+* Wise, R., Hart, T., Cars, O., Streulens, M., Helmuth, R., Huovinen, P., & Sprenger, M. (1998). Antimicrobial resistance. BMJ, 317(7159), 609–610. https://doi.org/10.1136/bmj.317.7159.609
+
+* Wise, R., Hart, T., Cars, O., Streulens, M., Helmuth, R., Huovinen, P., & Sprenger, M. (1998). Antimicrobial resistance. BMJ, 317(7159), 609–610. https://doi.org/10.1136/bmj.317.7159.609
+
+* Wise, R., Hart, T., Cars, O., Streulens, M., Helmuth, R., Huovinen, P., & Sprenger, M. (1998). Antimicrobial resistance. BMJ, 317(7159), 609–610. https://doi.org/10.1136/bmj.317.7159.609
+
+* World Health Organisation. (2018, February 15). Antimicrobial resistance. Who.int; World Health Organization: WHO. https://www.who.int/en/news-room/fact-sheets/detail/antimicrobial-resistance
+
+* Simonsen, G. S. (2018). Antimicrobial resistance surveillance in Europe and beyond. Eurosurveillance, 23(42). https://doi.org/10.2807/1560-7917.es.2018.23.42.1800560
+
+* Rogers, S. (2013, March 11). Antibiotics and drug resistance: how do we compare? The Guardian. https://www.theguardian.com/news/datablog/2013/mar/11/antibiotic-drug-resistance
