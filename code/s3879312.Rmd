@@ -167,8 +167,18 @@ The visualisation chosen had the following three main issues:
 
 * Briefly explain issue 1: hard for common audience with no medical background to identify issues
 * Briefly explain issue 2: Color blindness issues
-* Briefly explain issue 3: Shapes and sizes of the circle is not unified
+* Briefly explain issue 3: Preattentive Processing - Shapes and sizes of the circle is not unified (area is not obvious and overlapping on the grid), light/dark, use density mislead, Area
+(highlight timeline: no development new antibiotics for 20 years and the resistance of existing antibiotics)
+not compare on the same scale
+No major visually saying that no major new antibiotics develop in 20 years
 
+Changes:
++ Gestalt Laws: proximity (cluster together so a group?), similarity -> corrrect using symmetry to compare side by side, auto interpreted as the foreground (Figure Ground Principle)
++ Use Length to represent position - common scale - same scale but unaligned for 2 cat
++ Color - Hue (different color viz for nominal variables)
++ Use dodge method to have position adjustment. Other methods (filling, jiterring, nudging, stacking)
++ Faceting
++ Coordinate systems: Cartesian
 ```
 data and aesthetic mappings,
 • geometric objects,
