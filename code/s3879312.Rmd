@@ -330,6 +330,284 @@ This heatmap provides a quick visual representation of resistance percentages fo
 library(ggplot2)
 library(reshape2)
 library(RColorBrewer)
+library(grid)
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic),]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Append introduction date to antibiotic name and remove underscores
+melted_df$display_name <- paste(gsub("_", " ", melted_df$variable), "(", melted_df$Date_introduced, ")")
+
+# Ensure that display_name is a factor and ordered based on variable
+melted_df$display_name <- factor(melted_df$display_name, levels = unique(melted_df$display_name[order(melted_df$variable)]))
+
+# Plotting the heatmap
+p <- ggplot(melted_df, aes(x = display_name, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white", width = 0.7, height = 0.7) +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Resistance %") +
+  labs(x = "Individual Antibiotics", y = "Bacterium") +
+  theme(
+        axis.text.x = element_text(angle = 90, hjust = 1, size = 12, margin = margin(t = 10)),  # Extra space between x-axis title and values
+        axis.text.y = element_text(size = 12, margin = margin(r = 10)),  # Extra space between y-axis title and values
+        axis.title.x = element_text(face = "bold", size = 14),
+        axis.title.y = element_text(face = "bold", size = 14),
+        plot.margin = margin(10, 10, 80, 10),
+        panel.grid.major = element_line(colour = "gray", size = 0.25),
+        plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA)
+  ) + 
+  scale_x_discrete(position = "top")
+
+# Display plot
+print(p)
+
+# Display the title text at the top-left of the plot
+grid::grid.text("ANTIBIOTIC CHALLENGE: BACTERIAL RESISTANCE OVERVIEW", x = 0.01, y = 0.99, just = c("left", "top"), gp = grid::gpar(col = "blue", fontsize = 20, fontface = "bold"))
+
+# Display the main source text below the plot
+grid::grid.text("Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data) | Designed by Thu Tran", x = 0.01, y = 0.02, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 10, fontface = "italic"))
+
+# Display the additional information below the main source text
+grid::grid.text("Original image: informationisbeautiful.net | Data collected by July 2014", x = 0.01, y = 0.01, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 10, fontface = "italic"))
+```
+
+
+```{r, fig.width=25, fig.height=20}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+library(grid)
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic),]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Append introduction date to antibiotic name and remove underscores
+melted_df$display_name <- paste(gsub("_", " ", melted_df$variable), "(", melted_df$Date_introduced, ")")
+
+# Ensure that display_name is a factor and ordered based on variable
+melted_df$display_name <- factor(melted_df$display_name, levels = unique(melted_df$display_name[order(melted_df$variable)]))
+
+# Plotting the heatmap
+p <- ggplot(melted_df, aes(x = display_name, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white", width = 0.7, height = 0.7) +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Resistance %") +
+  labs(x = "Individual Antibiotics", y = "Bacterium") +
+  theme(
+        axis.text.x = element_text(angle = 90, hjust = 1, size = 12, margin = margin(t = 10)),  # Extra space between x-axis title and values
+        axis.text.y = element_text(size = 12, margin = margin(r = 10)),  # Extra space between y-axis title and values
+        axis.title.x = element_text(face = "bold", size = 14),
+        axis.title.y = element_text(face = "bold", size = 14),
+        plot.title = element_text(face = "bold", color = "blue", size = 18),  # Even bolder and larger plot title
+        plot.margin = margin(10, 10, 80, 10),
+        panel.grid.major = element_line(colour = "gray", size = 0.25),
+        plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA)
+  ) + 
+  scale_x_discrete(position = "top") +
+  ggtitle("ANTIBIOTIC CHALLENGE: BACTERIAL RESISTANCE OVERVIEW")
+
+# Display plot
+print(p)
+
+# Display the main source text below the plot
+grid::grid.text("Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data) | Designed by Thu Tran (tnathu-ai)", x = 0.01, y = 0.02, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 10, fontface = "italic"))
+
+# Display the additional information below the main source text
+grid::grid.text("Original image: informationisbeautiful.net | Data collected by July 2014", x = 0.01, y = 0.01, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 10, fontface = "italic"))
+```
+
+
+```{r, fig.width=25, fig.height=20}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+library(grid)
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic),]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Append introduction date to antibiotic name and remove underscores
+melted_df$display_name <- paste(gsub("_", " ", melted_df$variable), "(", melted_df$Date_introduced, ")")
+
+# Ensure that display_name is a factor and ordered based on variable
+melted_df$display_name <- factor(melted_df$display_name, levels = unique(melted_df$display_name[order(melted_df$variable)]))
+
+# Plotting the heatmap
+p <- ggplot(melted_df, aes(x = display_name, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white", width = 0.7, height = 0.7) +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Resistance %") +
+  labs(x = "Individual Antibiotics", y = "Bacterium") +
+  theme(
+        axis.text.x = element_text(angle = 90, hjust = 1, size = 12, margin = margin(t = 10)),  # Extra space between x-axis title and values
+        axis.text.y = element_text(size = 12, margin = margin(r = 10)),  # Extra space between y-axis title and values
+        axis.title.x = element_text(face = "bold", size = 14),
+        axis.title.y = element_text(face = "bold", size = 14),
+        plot.title = element_text(face = "bold", color = "blue", size = 16),  # Bold and blue plot title
+        plot.margin = margin(10, 10, 80, 10),
+        panel.grid.major = element_line(colour = "gray", size = 0.25),
+        plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA)
+  ) + 
+  scale_x_discrete(position = "top") +
+  ggtitle("Resistance of Various Antibiotics to Bacteria")
+
+# Display plot
+print(p)
+
+# Display the main source text below the plot
+grid::grid.text("Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data)", x = 0.01, y = 0.02, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 10, fontface = "italic"))
+
+# Display the additional information below the main source text
+grid::grid.text("Original image: informationisbeautiful.net | Data collected by July 2014", x = 0.01, y = 0.01, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 10, fontface = "italic"))
+```
+
+
+```{r, fig.width=25, fig.height=20}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+library(grid)
+
+# Define the OkabeIto palette
+OkabeIto <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#000000")
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic), ]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Append introduction date to antibiotic name and remove underscores
+melted_df$display_name <- paste(gsub("_", " ", melted_df$variable), "(", melted_df$Date_introduced, ")")
+
+# Ensure that display_name is a factor and ordered based on variable
+melted_df$display_name <- factor(melted_df$display_name, levels = unique(melted_df$display_name[order(melted_df$variable)]))
+
+# Plotting the heatmap
+p <- ggplot(melted_df, aes(x = display_name, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white", width = 0.7, height = 0.7) +
+  scale_fill_gradient(low = OkabeIto[1], high = OkabeIto[8], name = "Resistance %") +
+  labs(x = "Individual Antibiotics", y = "Bacterium") +
+  theme(
+        axis.text.x = element_text(angle = 90, hjust = 1, size = 12, margin = margin(t = 5)),  # Margin to space out x axis values
+        axis.text.y = element_text(size = 12, margin = margin(r = 5)),  # Margin to space out y axis values
+        axis.title.x = element_text(face = "bold", size = 14, margin = margin(t = 15)),  # Bold x axis title
+        axis.title.y = element_text(face = "bold", size = 14, margin = margin(r = 15)),  # Bold y axis title
+        plot.title = element_text(face = "bold", color = "blue", size = 16),  # Highlight main title in bold blue
+        plot.margin = margin(10, 10, 80, 10),
+        panel.grid.major = element_line(colour = "gray", size = 0.25),
+        plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA)
+  ) + 
+  scale_x_discrete(position = "top") +
+  ggtitle("Resistance of Various Antibiotics to Bacteria")
+
+# Display plot
+print(p)
+
+# Display the main source text below the plot
+grid::grid.text("Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data)", x = 0.01, y = 0.02, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 10, fontface = "italic"))
+
+# Display the additional information below the main source text
+grid::grid.text("Original image: informationisbeautiful.net | Data collected by July 2014", x = 0.01, y = 0.01, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 10, fontface = "italic"))
+```
+
+
+```{r, fig.width=25, fig.height=20}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+library(grid)
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic), ]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Append introduction date to antibiotic name and remove underscores
+melted_df$display_name <- paste(gsub("_", " ", melted_df$variable), "(", melted_df$Date_introduced, ")")
+
+# Ensure that display_name is a factor and ordered based on variable
+melted_df$display_name <- factor(melted_df$display_name, levels = unique(melted_df$display_name[order(melted_df$variable)]))
+
+# Plotting the heatmap
+p <- ggplot(melted_df, aes(x = display_name, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white", width = 0.7, height = 0.7) +
+  scale_fill_gradient(low = "grey90", high = "red", name = "Resistance %") +
+  labs(x = "Individual Antibiotics", y = "Bacterium") +
+  theme(
+        axis.text.x = element_text(angle = 90, hjust = 1, size = 12),  # Bigger font size for x axis values
+        axis.text.y = element_text(size = 12),  # Bigger font size for y axis values
+        axis.title.x = element_text(face = "bold", size = 14),  # Bold x axis title
+        axis.title.y = element_text(face = "bold", size = 14),  # Bold y axis title
+        plot.margin = margin(10, 10, 80, 10),
+        panel.grid.major = element_line(colour = "gray", size = 0.25),
+        plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA)
+  ) + 
+  scale_x_discrete(position = "top") +
+  ggtitle("Resistance of Various Antibiotics to Bacteria")
+
+# Display plot
+print(p)
+
+# Display the main source text below the plot
+grid::grid.text("Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data)", x = 0.01, y = 0.02, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 10, fontface = "italic"))
+
+# Display the additional information below the main source text
+grid::grid.text("Original image: informationisbeautiful.net | Data collected by July 2014", x = 0.01, y = 0.01, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 10, fontface = "italic"))
+```
+
+
+```{r}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
 library(grid)  # Ensure the grid package is loaded for grid.text
 
 # Melt the data frame to long format for ggplot
