@@ -130,14 +130,6 @@ This dataset serves as a snapshot that underlines the urgency for new antibiotic
 
 ---
 
-## References
-- [Original data visualization source](https://informationisbeautiful.net/visualizations/antibiotic-resistance/)
-- [Data](https://docs.google.com/spreadsheets/d/1QMSQDr0vx_NuMkbSb-9wjUCBplMZpYvxASTJh1M-NhI/edit#gid=0)
-- Centre for Disease Dynamics
-- World Health Organisation
-- CDC (US data)
-
-
 
 ## Deconstruct
 
@@ -149,7 +141,7 @@ The original data visualisation selected for the assignment was as follows:
 <center>
 <img src="../images/original_image.png" width="80%">
 </center>
-<center>*Source: [informationisbeautiful.net](https://informationisbeautiful.net/visualizations/antibiotic-resistance/) (July 2014).*</center>
+<center>*Figure 1. Original Visualization. Source: [informationisbeautiful.net](https://informationisbeautiful.net/visualizations/antibiotic-resistance/) (July 2014).*</center>
 <br>
 
 
