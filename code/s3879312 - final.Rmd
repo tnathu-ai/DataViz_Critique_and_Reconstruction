@@ -83,9 +83,8 @@ The original data visualisation selected for the assignment was as follows:
 The objective and audience of the original data visualisation chosen can be summarised as follows: 
 
 **Objective**
-The original visualisation, titled "The Antibiotic Abacus", is designed to showcase the resistance of various bacteria to different antibiotics and antibiotic families. The aim of this study is two-fold:
-1. To provide an effective visualization that educates the general public about the dangers of excessive antibiotic use.
-2. To offer infectious disease doctors a quick yet comprehensive overview of antibiotic resistance in commonly encountered bacteria.
+The original data visualisation's objective is to provide a comprehensive overview of bacterial resistance to various antibiotics, highlighting the relative effectiveness of individual antibiotics against different bacteria, and emphasising the stagnation in developing new antibiotics over the years.
+
 
 **Audience**
 
@@ -95,13 +94,14 @@ Given that the original visualisation is published on a visualisation-focused si
 
 The visualisation chosen had the following three main issues:
 
-##### Overwhelming Complexity:
-+ Cluttered Display: The visualisation is densely populated with data, labels, and colours, potentially confusing viewers. Inconsistent circle area may mislead viewers. The visualisation must be improved to convey the relative importance due to non-uniform scales.
+##### + Overwhelming Complexity:
+Cluttered Display: The visualisation is densely populated with data, labels, and colours, potentially confusing viewers. Inconsistent circle area may mislead viewers. The visualisation must be improved to convey the relative importance due to non-uniform scales.
 
-##### Perceptual Issues:
+##### + Perceptual Issues:
 The pink and purple choices are problematic for those with certain colour blindness (Red-Blind/Protanopia and Monochromacy/Achromatopsia). Also, scattered small text annotations hinder quick understanding.Varying circle sizes and overlaps misrepresent data. Shading and density variations are not optimised. Different scales for bacteria and antibiotics hinder direct comparisons.
 
-#### Audience Consideration: Excessive detail and data points can obscure the main message for non-specialists. The distinction between individual antibiotics and antibiotic families is unclear. The line indicating "drug ineffective against bacteria" is easily misconstrued as a grid for the plot. 
+##### + Audience Consideration: 
+Excessive detail and data points can obscure the main message for non-specialists. The distinction between individual antibiotics and antibiotic families is unclear. The line indicating "drug ineffective against bacteria" is easily misconstrued as a grid for the plot. 
 
 ## Reconstruct
 
@@ -114,7 +114,6 @@ library(ggplot2)
 library(reshape2)
 library(RColorBrewer)
 library(grid)
-
 ```
 
 ### Pre-processing
@@ -191,36 +190,32 @@ The following plot fixes the main issues in the original.
 This heatmap provides a quick visual representation of resistance percentages for various bacteria against different antibiotics. The darker the color, the higher the resistance. The antibiotics are also ordered based on their introduction dates, which can give an idea about the evolution of resistance over time.
 
 ```{r, fig.width=25, fig.height=20, fig.align="center", fig.cap="Figure 2: Antibiotic Resistance Heatmap (Sep 2023)"}
-library(ggplot2)
-library(reshape2)
-library(RColorBrewer)
-library(grid)
 
-# Melt the data frame to long format for ggplot
+# Convert antibiotic_resistance_df to long format for ease of plotting.
 melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
 
-# Ensure that the introduction dates are unique
+# Remove duplicate antibiotic introduction dates to avoid redundancy.
 antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic),]
 
-# Create an ordered factor for the Antibiotic based on Date_introduced
+# Order the antibiotics by their introduction date for better visualization.
 antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
                                            levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
 
-# Merge the melted dataframe with the antibiotic introduction date
+# Merge the long format dataframe with antibiotic introduction dates for comprehensive data.
 melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
 
-# Append introduction date to antibiotic name and remove underscores
+# Modify antibiotic names to include introduction dates and replace underscores with spaces.
 melted_df$display_name <- paste(gsub("_", " ", melted_df$variable), "(", melted_df$Date_introduced, ")")
 
-# Ensure that display_name is a factor and ordered based on variable
+# Set the order of display names based on their respective antibiotics.
 melted_df$display_name <- factor(melted_df$display_name, levels = unique(melted_df$display_name[order(melted_df$variable)]))
 
-# Remove the x-axis title from the original ggplot
+# Build the heatmap visualization.
 p <- ggplot(melted_df, aes(x = display_name, y = Bacterium_name)) +
-  geom_tile(aes(fill = value), color = "white", width = 0.5, height = 0.5) +
-  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Resistance %") +
-  labs(y = "Bacterium") +
-  theme(
+  geom_tile(aes(fill = value), color = "white", width = 0.5, height = 0.5) +  # Use tiles for heatmap.
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Resistance %") +  # Set color gradient for resistance.
+  labs(y = "Bacterium") +  # Label y-axis.
+  theme(  # Fine-tune visualization appearance.
         axis.text.x = element_text(angle = 90, hjust = 1, size = 15, margin = margin(t = 10)),
         axis.text.y = element_text(size = 15, margin = margin(r = 10)),
         axis.title.y = element_text(face = "bold", size = 22, margin = margin(r = 20)),
@@ -231,26 +226,25 @@ p <- ggplot(melted_df, aes(x = display_name, y = Bacterium_name)) +
         legend.text = element_text(size = 16),
         legend.title = element_text(size = 18, face = "bold")
   ) + 
-  scale_x_discrete(position = "top", name = NULL)  # Remove default x-axis label here
+  scale_x_discrete(position = "top", name = NULL)  # Place x-axis at the top and remove its default label.
 
-# Display plot
+# Output the plot.
 print(p)
 
-# Add the x-axis title manually using grid functions
+# Manually add the x-axis title.
 grid::grid.text("Individual Antibiotic", x = 0.01, y = 0.77, just = c("left", "center"), gp = grid::gpar(col = "black", fontsize = 22, fontface = "bold"))
 
-# Display the title text at the top-left of the plot
+# Set the main title for the visualization.
 grid::grid.text("ANTIBIOTIC CHALLENGE: BACTERIAL RESISTANCE OVERVIEW", x = 0.01, y = 0.975, just = c("left", "top"), gp = grid::gpar(col = "blue", fontsize = 30, fontface = "bold"))
 
-# Display the main source text below the plot
-grid::grid.text("Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data) | Designed by Thu Tran", x = 0.01, y = 0.02, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 13, fontface = "italic"))
+# Provide citation for data sources in a darker gray.
+grid::grid.text("Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data) | Designed by Thu Tran", x = 0.01, y = 0.02, just = c("left", "bottom"), gp = grid::gpar(col = "#2E2E2E", fontsize = 13, fontface = "italic"))
 
-# Display the additional information below the main source text
-grid::grid.text("Original image: informationisbeautiful.net | Data collected by July 2014", x = 0.01, y = 0.01, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 13, fontface = "italic"))
+# State origin of the initial image and data collection date.
+grid::grid.text("Original image: informationisbeautiful.net | Data collected by July 2014", x = 0.01, y = 0.01, just = c("left", "bottom"), gp = grid::gpar(col = "#2E2E2E", fontsize = 13, fontface = "italic"))
 
-# Save the plot to a file
+# Save the final visualization to an external image file.
 ggsave(filename = "../images/antibiotic_resistance_plot.png", width = 25, height = 20)
-
 ```
 
 => The visualisation serves as a bridge between complex data and a wide audience range, from specialists to the general public, aiming to educate them about the pressing issue of antibiotic resistance. It achieves this by showcasing a heatmap of bacterial resistance percentages for each antibiotic, contextualised with their respective introduction dates. This design choice communicates the increasing challenge of bacterial resistance to newer antibiotics.
@@ -259,53 +253,41 @@ ggsave(filename = "../images/antibiotic_resistance_plot.png", width = 25, height
 
 ## References
 
-The reference to the original data visualisation choose, the data source(s) used for the reconstruction and any other sources used for this assignment are as follows:
+* Information Is Beautiful. (n.d.). Antibiotic Resistance. https://informationisbeautiful.net/visualizations/antibiotic-resistance/
 
-* ACMA Research and Analysis Section. (2015). *Australians get mobile*. Retrieved August 13, 2019, from Australian Communications and Media Authority website: https://www.acma.gov.au/theACMA/engage-blogs/engage-blogs/Research-snapshots/Australians-get-mobile
+* Pneumococcal Disease and Antibiotic Resistance | CDC. (2022, January 24). https://www.cdc.gov/pneumococcal/clinicians/drug-resistance.html
 
-* Pneumococcal Disease and Antibiotic Resistance | CDC. (2022, January 24). Www.cdc.gov. https://www.cdc.gov/pneumococcal/clinicians/drug-resistance.html
-
-* About Division of Bacterial Diseases | CDC. (2021, November 30). Www.cdc.gov. https://www.cdc.gov/ncird/dbd.html
+* About Division of Bacterial Diseases | CDC. (2021, November 30). https://www.cdc.gov/ncird/dbd.html
 
 * Immunization and Respiratory Diseases (NCIRD) Home. (2020). https://www.cdc.gov/ncird/
 
-* Antibiotic - New World Encyclopedia. (n.d.). Www.newworldencyclopedia.org. Retrieved September 16, 2023, from https://www.newworldencyclopedia.org/entry/Antibiotic
+* Antibiotic - New World Encyclopedia. (n.d.). https://www.newworldencyclopedia.org/entry/Antibiotic
 
-* Antibiotics | Society | The Guardian. (n.d.). The Guardian. Retrieved September 16, 2023, from https://www.theguardian.com/society/antibiotics
+* Antibiotics | Society | The Guardian. (n.d.). https://www.theguardian.com/society/antibiotics
 
-* Antibiotics | Society | The Guardian. (n.d.). The Guardian. Retrieved September 16, 2023, from https://www.theguardian.com/society/antibiotics
+* (Note: You've duplicated the entry for "Antibiotics | Society | The Guardian" and the "Slashdot" entry. Remove the duplicates.)
 
-* Drug-Resistant Superbugs Sweeping Across Europe - Slashdot. (2011, November 18). Science.slashdot.org. https://science.slashdot.org/story/11/11/18/0430245/drug-resistant-superbugs-sweeping-across-europe
+* Drug-Resistant Superbugs Sweeping Across Europe - Slashdot. (2011, November 18). https://science.slashdot.org/story/11/11/18/0430245/drug-resistant-superbugs-sweeping-across-europe
 
-* Drug-Resistant Superbugs Sweeping Across Europe - Slashdot. (2011, November 18). Science.slashdot.org. https://science.slashdot.org/story/11/11/18/0430245/drug-resistant-superbugs-sweeping-across-europe
-
-* NHS. (2018, August 16). Medicines A-Z. Nhs.uk. https://www.nhs.uk/medicines/
+* NHS. (2018, August 16). Medicines A-Z. https://www.nhs.uk/medicines/
 
 * Wise, R., Hart, T., Cars, O., Streulens, M., Helmuth, R., Huovinen, P., & Sprenger, M. (1998). Antimicrobial resistance. BMJ, 317(7159), 609–610. https://doi.org/10.1136/bmj.317.7159.609
 
-* Wise, R., Hart, T., Cars, O., Streulens, M., Helmuth, R., Huovinen, P., & Sprenger, M. (1998). Antimicrobial resistance. BMJ, 317(7159), 609–610. https://doi.org/10.1136/bmj.317.7159.609
-
-* Wise, R., Hart, T., Cars, O., Streulens, M., Helmuth, R., Huovinen, P., & Sprenger, M. (1998). Antimicrobial resistance. BMJ, 317(7159), 609–610. https://doi.org/10.1136/bmj.317.7159.609
-
-* Wise, R., Hart, T., Cars, O., Streulens, M., Helmuth, R., Huovinen, P., & Sprenger, M. (1998). Antimicrobial resistance. BMJ, 317(7159), 609–610. https://doi.org/10.1136/bmj.317.7159.609
-
-* World Health Organisation. (2018, February 15). Antimicrobial resistance. Who.int; World Health Organization: WHO. https://www.who.int/en/news-room/fact-sheets/detail/antimicrobial-resistance
+* World Health Organisation. (2018, February 15). Antimicrobial resistance. https://www.who.int/en/news-room/fact-sheets/detail/antimicrobial-resistance
 
 * Simonsen, G. S. (2018). Antimicrobial resistance surveillance in Europe and beyond. Eurosurveillance, 23(42). https://doi.org/10.2807/1560-7917.es.2018.23.42.1800560
 
 * Rogers, S. (2013, March 11). Antibiotics and drug resistance: how do we compare? The Guardian. https://www.theguardian.com/news/datablog/2013/mar/11/antibiotic-drug-resistance
 
-* Hadley Wickham (2010) A Layered Grammar of Graphics, Journal of
-Computational and Graphical Statistics, 19:1, 3-28, DOI: 10.1198/jcgs.2009.07098
+* Wickham, H. (2010). A Layered Grammar of Graphics. Journal of Computational and Graphical Statistics, 19(1), 3-28. https://doi.org/10.1198/jcgs.2009.07098
 
-* Riederer, Y. X., Christophe Dervieux, Emily. (n.d.). Acknowledgments | R Markdown Cookbook. In bookdown.org. Retrieved September 17, 2023, from https://bookdown.org/yihui/rmarkdown-cookbook/acknowledgments.html
+* Riederer, Y. X., Dervieux, C., & Emily. (n.d.). Acknowledgments | R Markdown Cookbook. https://bookdown.org/yihui/rmarkdown-cookbook/acknowledgments.html
 
-* Create Elegant Data Visualisations Using the Grammar of Graphics. (2019). Tidyverse.org. https://ggplot2.tidyverse.org/
+* Create Elegant Data Visualisations Using the Grammar of Graphics. (2019). https://ggplot2.tidyverse.org/
 
-* Create Elegant Data Visualisations Using the Grammar of Graphics [R package ggplot2 version 3.2.1]. (2019). R-Project.org. https://cran.r-project.org/package=ggplot2
-
-* Beautiful, I. is. (n.d.). Antibiotic Resistance. Information Is Beautiful. https://informationisbeautiful.net/visualizations/antibiotic-resistance/
+* Create Elegant Data Visualisations Using the Grammar of Graphics [R package ggplot2 version 3.2.1]. (2019). https://cran.r-project.org/package=ggplot2
 
 ## Acknowledgments
-Baglin, J. (2023). Data Visualisation: From Theory to Practice. In Data Visualisation and
+
+* Baglin, J. (2023). Data Visualisation: From Theory to Practice. In Data Visualisation and
 Communication (2350) [Online Textbook]. RMIT University. Retrieved from https://dark-star161610.appspot.com/secured/_book/index.html
