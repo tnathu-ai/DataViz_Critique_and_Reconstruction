@@ -47,9 +47,9 @@ Please carefully read the statements below and check each box if you agree with 
 
 ---
 
-## Columns Explained
+## Terminology Explained
 
-| Column                    | Description                                                                 |
+| Terminology                    | Description                                                                 |
 |---------------------------|-----------------------------------------------------------------------------|
 | Bacterium Name            | Scientific name of the bacteria.                                             |
 | Causes                    | Diseases or conditions that the bacteria typically cause.                    |
@@ -59,15 +59,6 @@ Please carefully read the statements below and check each box if you agree with 
 | Resistance Score          | A scale from 1-4 indicating the level of concern, with higher scores being more concerning. |
 | N Antibiotics or Classes  | Number of antibiotics or classes showing at least some resistance.           |
 | Average % Resistance      | Calculated average resistance score across all considered antibiotics.       |
-
----
-
-## Key Concerns
-
-1. **Rising Resistance**: Resistance is stable or increasing for many bacteria.
-2. **Multi-drug Resistance**: Resistance to multiple classes of antibiotics.
-3. **Gram-negative Bacteria**: More resistant and increasing so over time.
-4. **Data Gaps**: Unquantified resistances could underrepresent actual resistance levels.
 
 
 ---
@@ -104,29 +95,13 @@ Given that the original visualisation is published on a visualisation-focused si
 
 The visualisation chosen had the following three main issues:
 
-* hard for common audience with no medical background to identify issues
-* \Color blindness issues
-*  Preattentive Processing - Shapes and sizes of the circle is not unified (area is not obvious and overlapping on the grid), light/dark, use density mislead, Area
-(highlight timeline: no development new antibiotics for 20 years and the resistance of existing antibiotics)
-not compare on the same scale
-No major visually saying that no major new antibiotics develop in 20 years
+##### Overwhelming Complexity:
++ Cluttered Display: The visualisation is densely populated with data, labels, and colours, potentially confusing viewers. Inconsistent circle area may mislead viewers. The visualisation must be improved to convey the relative importance due to non-uniform scales.
 
-Changes in new visualization:
-+ Gestalt Laws: proximity (cluster together so a group?), similarity -> corrrect using symmetry to compare side by side, auto interpreted as the foreground (Figure Ground Principle)
-+ Use Length to represent position - common scale - same scale but unaligned for 2 cat
-+ Color - Hue (different color viz for nominal variables)
-+ Use dodge method to have position adjustment. Other methods (filling, jiterring, nudging, stacking)
-+ Faceting
-+ Coordinate systems: Cartesian
-```
-data and aesthetic mappings,
-• geometric objects,
-• scales, and
-• facet specification.
-We have also touched on two other components:
-• statistical transformations, and
-• the coordinate system.
-```
+##### Perceptual Issues:
+The pink and purple choices are problematic for those with certain colour blindness (Red-Blind/Protanopia and Monochromacy/Achromatopsia). Also, scattered small text annotations hinder quick understanding.Varying circle sizes and overlaps misrepresent data. Shading and density variations are not optimised. Different scales for bacteria and antibiotics hinder direct comparisons.
+
+#### Audience Consideration: Excessive detail and data points can obscure the main message for non-specialists. The distinction between individual antibiotics and antibiotic families is unclear. The line indicating "drug ineffective against bacteria" is easily misconstrued as a grid for the plot. 
 
 ## Reconstruct
 
@@ -144,7 +119,7 @@ library(grid)
 
 ### Pre-processing
 
-**Data:** In July 2014, the dataset on antibiotic resistance was sourced from [informationisbeautiful.net](https://docs.google.com/spreadsheets/d/1QMSQDr0vx_NuMkbSb-9wjUCBplMZpYvxASTJh1M-NhI/edit#gid=0). I have independently verified the integrity and accuracy of this data in 2023 against original sources, including the Centre for Disease Dynamics, World Health Organisation, and CDC (US data). Subsequent data processing and formatting to generate a tailored dataframe were conducted using the R programming language.
+**Data:** In July 2014, the dataset on antibiotic resistance was sourced from [informationisbeautiful.net](https://docs.google.com/spreadsheets/d/1QMSQDr0vx_NuMkbSb-9wjUCBplMZpYvxASTJh1M-NhI/edit#gid=0). We have independently verified the integrity and accuracy of this data in 2023 against original sources, including the Centre for Disease Dynamics, World Health Organisation, and CDC (US data). Subsequent data processing and formatting to generate a tailored dataframe were conducted using the R programming language.
 
 ```{r}
 # Data
@@ -215,7 +190,7 @@ The following plot fixes the main issues in the original.
 
 This heatmap provides a quick visual representation of resistance percentages for various bacteria against different antibiotics. The darker the color, the higher the resistance. The antibiotics are also ordered based on their introduction dates, which can give an idea about the evolution of resistance over time.
 
-```{r, fig.width=25, fig.height=20, fig.align="center", fig.cap="Figure 2: Antibiotic Resistance Heatmap"}
+```{r, fig.width=25, fig.height=20, fig.align="center", fig.cap="Figure 2: Antibiotic Resistance Heatmap (Sep 2023)"}
 library(ggplot2)
 library(reshape2)
 library(RColorBrewer)
@@ -240,11 +215,6 @@ melted_df$display_name <- paste(gsub("_", " ", melted_df$variable), "(", melted_
 # Ensure that display_name is a factor and ordered based on variable
 melted_df$display_name <- factor(melted_df$display_name, levels = unique(melted_df$display_name[order(melted_df$variable)]))
 
-# ...[Previous code up to plotting remains unchanged]...
-
-# Remove the x-axis title from the original ggplot
-# ...[Rest of the code remains unchanged up to plotting]...
-
 # Remove the x-axis title from the original ggplot
 p <- ggplot(melted_df, aes(x = display_name, y = Bacterium_name)) +
   geom_tile(aes(fill = value), color = "white", width = 0.5, height = 0.5) +
@@ -262,7 +232,6 @@ p <- ggplot(melted_df, aes(x = display_name, y = Bacterium_name)) +
         legend.title = element_text(size = 18, face = "bold")
   ) + 
   scale_x_discrete(position = "top", name = NULL)  # Remove default x-axis label here
-
 
 # Display plot
 print(p)
@@ -284,8 +253,9 @@ ggsave(filename = "../images/antibiotic_resistance_plot.png", width = 25, height
 
 ```
 
-#### => The visualisation serves as a bridge between complex data and a wide audience range, from specialists to the general public, aiming to educate them about the pressing issue of antibiotic resistance. It achieves this by showcasing a heatmap of bacterial resistance percentages for each antibiotic, contextualised with their respective introduction dates. This design choice communicates the increasing challenge of bacterial resistance to newer antibiotics.
+=> The visualisation serves as a bridge between complex data and a wide audience range, from specialists to the general public, aiming to educate them about the pressing issue of antibiotic resistance. It achieves this by showcasing a heatmap of bacterial resistance percentages for each antibiotic, contextualised with their respective introduction dates. This design choice communicates the increasing challenge of bacterial resistance to newer antibiotics.
 
+----
 
 ## References
 
