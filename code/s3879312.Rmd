@@ -187,7 +187,7 @@ We have also touched on two other components:
 
 The following code was used to fix the issues identified in the original. 
 
-```{r}
+```{r import}
 # Read and preprocess libraries
 library(readxl)
 library(dplyr)
@@ -202,57 +202,7 @@ library(tidyr)
 
 ### Pre-processing
 
-**Data:** In July 2014, the dataset on antibiotic resistance was sourced from informationisbeautiful.net. I have independently verified the integrity and accuracy of this data in 2023 against original sources, including the Centre for Disease Dynamics, World Health Organisation, and CDC (US data). Subsequent data processing and formatting to generate a tailored dataframe were conducted using the R programming language.
-
-```{r}
-# Comment: Read Excel data from the first sheet
-data <- read_excel("../data/antibiotic_data.xlsx", sheet = 1)
-
-# Comment: Rename Columns
-# Assuming the first row has column names that need renaming
-names(data) <- str_replace_all(names(data), c(" " = "_", "%" = "percent", "-" = "_"))
-
-# Comment: Save the cleaned data into a new CSV file
-write.csv(data, "../data/cleaned_antibiotic_data.csv", row.names = FALSE)
-
-data
-```
-
-
-```{r}
-
-# Load data (assuming it's saved in a file called "data.csv")
-df <- read.csv("../data/cleaned_antibiotic_data.csv", stringsAsFactors = FALSE, header = TRUE)
-
-# Handle missing values:
-# Replace "x" with NA and convert to numeric
-df[df == "x"] <- NA
-df[4:ncol(df)] <- lapply(df[4:ncol(df)], as.numeric)
-
-# Handle columns:
-# The first three columns seem to be about the bacterium name, its common diseases, and its gram-negative status. 
-# For better clarity, we will rename them.
-colnames(df)[1:3] <- c("BacteriumName", "Causes", "GramNegative")
-
-# Removing rows that are not relevant to our analysis:
-# Rows that contain only NAs or meta-information are removed.
-df <- df %>% filter(!is.na(BacteriumName))
-
-# As a suggestion, you might want to separate the antibiotics based on their family/group. 
-# However, this would require domain knowledge about which antibiotic belongs to which group.
-
-# You can save the cleaned data to a new CSV file if desired.
-write.csv(df, "../data/cleaned_data.csv", row.names = FALSE)
-
-# The data is now cleaned and saved as "cleaned_data.csv".
-df
-
-```
-
-
-### Reconstruction
-
-The following plot fixes the main issues in the original.
+**Data:** In July 2014, the dataset on antibiotic resistance was sourced from [informationisbeautiful.net](https://docs.google.com/spreadsheets/d/1QMSQDr0vx_NuMkbSb-9wjUCBplMZpYvxASTJh1M-NhI/edit#gid=0). I have independently verified the integrity and accuracy of this data in 2023 against original sources, including the Centre for Disease Dynamics, World Health Organisation, and CDC (US data). Subsequent data processing and formatting to generate a tailored dataframe were conducted using the R programming language.
 
 ```{r}
 # Data
@@ -316,9 +266,84 @@ head(antibiotic_resistance_df)
 head(antibiotic_intro_dates)
 ```
 
+
+### Reconstruction
+
+The following plot fixes the main issues in the original.
+
 This heatmap provides a quick visual representation of resistance percentages for various bacteria against different antibiotics. The darker the color, the higher the resistance. The antibiotics are also ordered based on their introduction dates, which can give an idea about the evolution of resistance over time.
 
-```{r, fig.width=25, fig.height=20}
+```{r, fig.width=25, fig.height=20, fig.align="center", echo = FALSE}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+library(grid)
+
+# Melt the data frame to long format for ggplot
+melted_df <- melt(antibiotic_resistance_df, id.vars = c("Bacterium_name", "Causes", "Gram_negative"))
+
+# Ensure that the introduction dates are unique
+antibiotic_intro_dates <- antibiotic_intro_dates[!duplicated(antibiotic_intro_dates$Antibiotic),]
+
+# Create an ordered factor for the Antibiotic based on Date_introduced
+antibiotic_intro_dates$Antibiotic <- factor(antibiotic_intro_dates$Antibiotic, 
+                                           levels = antibiotic_intro_dates$Antibiotic[order(antibiotic_intro_dates$Date_introduced)])
+
+# Merge the melted dataframe with the antibiotic introduction date
+melted_df <- merge(melted_df, antibiotic_intro_dates, by.x = "variable", by.y = "Antibiotic", all.x = TRUE)
+
+# Append introduction date to antibiotic name and remove underscores
+melted_df$display_name <- paste(gsub("_", " ", melted_df$variable), "(", melted_df$Date_introduced, ")")
+
+# Ensure that display_name is a factor and ordered based on variable
+melted_df$display_name <- factor(melted_df$display_name, levels = unique(melted_df$display_name[order(melted_df$variable)]))
+
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+library(grid)
+
+# ... [unchanged code above]
+
+# Plotting the heatmap
+p <- ggplot(melted_df, aes(x = display_name, y = Bacterium_name)) +
+  geom_tile(aes(fill = value), color = "white", width = 0.7, height = 0.7) +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Resistance %") +
+  labs(x = "Individual Antibiotic", y = "Bacterium") +
+  theme(
+        axis.text.x = element_text(angle = 90, hjust = 1, size = 12, margin = margin(t = 10)),  # Extra space between x-axis values
+        axis.text.y = element_text(size = 12, margin = margin(r = 10)),  # Extra space between y-axis values
+        axis.title.x = element_text(face = "bold", size = 20, margin = margin(t = 20)),  # Padding between x-axis title and values
+        axis.title.y = element_text(face = "bold", size = 20, margin = margin(r = 20)),  # Padding between y-axis title and values
+        plot.margin = margin(150, 10, 100, 10),  # Adjusted margins
+        panel.grid.major = element_line(colour = "gray", size = 0.25),
+        plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA),
+        legend.text = element_text(size = 14),          # Increase legend text size
+        legend.title = element_text(size = 16, face = "bold")  # Increase legend title size
+  ) + 
+  scale_x_discrete(position = "top")
+
+
+# Display plot
+print(p)
+
+# Display the title text at the top-left of the plot
+grid::grid.text("ANTIBIOTIC CHALLENGE: BACTERIAL RESISTANCE OVERVIEW", x = 0.01, y = 0.975, just = c("left", "top"), gp = grid::gpar(col = "blue", fontsize = 30, fontface = "bold"))
+
+# Display the main source text below the plot
+grid::grid.text("Sources: Centre for Disease Dynamics, World Health Organisation, CDC (US data) | Designed by Thu Tran", x = 0.01, y = 0.02, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 13, fontface = "italic"))
+
+# Display the additional information below the main source text
+grid::grid.text("Original image: informationisbeautiful.net | Data collected by July 2014", x = 0.01, y = 0.01, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 13, fontface = "italic"))
+
+# Save the plot to a file
+ggsave(filename = "../images/antibiotic_resistance_plot.png", width = 25, height = 20)
+
+```
+
+
+```{r, fig.width=25, fig.height=20, fig.align="center", echo = FALSE}
 library(ggplot2)
 library(reshape2)
 library(RColorBrewer)
@@ -371,6 +396,9 @@ grid::grid.text("Sources: Centre for Disease Dynamics, World Health Organisation
 
 # Display the additional information below the main source text
 grid::grid.text("Original image: informationisbeautiful.net | Data collected by July 2014", x = 0.01, y = 0.01, just = c("left", "bottom"), gp = grid::gpar(col = "gray", fontsize = 13, fontface = "italic"))
+
+# Save the plot
+ggsave("../images/antibiotic_resistance_plot.png", width = 25, height = 20)
 ```
 
 
