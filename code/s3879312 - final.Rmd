@@ -4,8 +4,8 @@ author: "tnathu-ai"
 subtitle: Deconstruct, Reconstruct Web Report
 output:
   html_document: default
-  word_document: default
   pdf_document: default
+  word_document: default
 urlcolor: blue
 ---
 
