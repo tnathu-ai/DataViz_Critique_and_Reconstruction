@@ -30,11 +30,11 @@ Excessive detail and data points can obscure the main message for non-specialist
 
 ## Original
 ![original plot](images/original_image.png)
-<center>*Figure 1. Original Visualization. Source: [informationisbeautiful.net](https://informationisbeautiful.net/visualizations/antibiotic-resistance/) (July 2014).*</center>
+<center>Figure 1. Original Visualization. Source: [informationisbeautiful.net](https://informationisbeautiful.net/visualizations/antibiotic-resistance/) (July 2014).</center>
 
 ## Reconstruct
 ![re-designed plot](images/antibiotic_resistance_plot.png)
-<center>*Figure 2: Antibiotic Resistance Heatmap (tnathu-ai, Sep 2023).*</center>
+<center>Figure 2: Antibiotic Resistance Heatmap (tnathu-ai, Sep 2023).</center>
 
 ## Repository Structure
 
